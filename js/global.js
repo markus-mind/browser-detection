@@ -1,7 +1,6 @@
  /* NOT WORKING:
   * safari on windows hat andere Versionen
   * safari iphone 7
-  * ie7/ie6 auf windows xp
   * chrome / firefox auf iOS
   */
 
@@ -22,15 +21,15 @@ var BROWSER_DOWNLOAD_LINKS = {
   'safari'      :       'https://www.apple.com/de/safari/',
   'edge'        :       'https://www.microsoft.com/de-de/windows/microsoft-edge',
   'ie'          :       'https://support.microsoft.com/de-de/help/17621/internet-explorer-downloads',
-  'ios'         :       '#',
-  'android'     :       '#',
-  'ie_mobile'   :       '#'
+  'ios'         :       '',
+  'android'     :       '',
+  'ie_mobile'   :       ''
 }
 
 var STATUS_MESSAGES = {
   'supported'   :       'Yeah! Dein Browser %name% mit der Version %version% unterstützt Angular!',
   'outdated'    :       'Tut uns leid, Dein Browser ist zu alt! Lad Dir hier die neueste Version von %name% runter!',
-  'unknown'     :       'Unser System wird von Deinem Browser nicht unterstützt, wir empfehlen Dir die neueste Version von Chrome zu installieren.',
+  'unknown'     :       'Unser System wird von Deinem Browser nicht unterstützt, wir empfehlen Dir, die neueste Version von Chrome zu installieren.',
   'os_outdated' :       'Dein Betriebssystem ist zu alt. Bitte aktualisiere es auf die neueste Version.'
 }
 
@@ -115,22 +114,22 @@ window.onload = function () {
       msg = STATUS_MESSAGES[status].replace("%name%", name);
       dlink = BROWSER_DOWNLOAD_LINKS[name];
       linkTxt = name.charAt(0).toUpperCase() + name.slice(1);
-      document.body.innerHTML += '<a href="' + dlink + '">Download ' + linkTxt + '</a>';
       break;
-    case 'outdated':
+    case 'os_outdated':
       msg = STATUS_MESSAGES[status];
       dlink = BROWSER_DOWNLOAD_LINKS[name];
       linkTxt = name.charAt(0).toUpperCase() + name.slice(1);
-      document.body.innerHTML += '<a href="' + dlink + '">Download ' + linkTxt + '</a>';
       break;
     case 'unknown':
       msg = STATUS_MESSAGES[status];
       dlink = BROWSER_DOWNLOAD_LINKS['chrome'];
       linkTxt = 'Chrome';
-      document.body.innerHTML += '<a href="' + dlink + '">Download ' + linkTxt + '</a>';
       break;
     default:
       break;
   }
   document.body.innerHTML += '<h1>' + msg + '</h1>';
+
+  if (status !== 'supported' && dlink !== '')
+    document.body.innerHTML += '<a href="' + dlink + '">Download ' + linkTxt + '</a>';
 }
