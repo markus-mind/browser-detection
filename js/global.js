@@ -27,6 +27,8 @@ var BROWSER_DOWNLOAD_LINKS = {
   'opera'       :       'http://www.opera.com/de',
   'ie'          :       'https://support.microsoft.com/de-de/help/17621/internet-explorer-downloads',
   'ios'         :       '',
+  'crios'       :       '',
+  'fxios'       :       '',
   'android'     :       '',
   'ie_mobile'   :       '',
 }
