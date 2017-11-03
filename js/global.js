@@ -1,7 +1,8 @@
  /* NOT WORKING:
   * safari on windows hat andere Versionen
-  * safari iphone 7
   * chrome / firefox auf iOS
+  * opera? -> Version 15 based on AngularJS
+  * opera on mobile?
   */
 
 var ANGULAR_SUPPORTED_BROWSER_VERSIONS = {
@@ -9,10 +10,13 @@ var ANGULAR_SUPPORTED_BROWSER_VERSIONS = {
   'firefox'     :       '',
   'safari'      :       '7',
   'edge'        :       '13',
+  'opera'       :       '15',
   'ie'          :       '9',
   'ios'         :       '7',
+  'crios'       :       '', // chrome on iOS
+  'fxios'       :       '', // firefox on iOS
   'android'     :       '4.1',
-  'ie_mobile'   :       '11'
+  'ie_mobile'   :       '11',
 }
 
 var BROWSER_DOWNLOAD_LINKS = {
@@ -20,10 +24,11 @@ var BROWSER_DOWNLOAD_LINKS = {
   'firefox'     :       'https://www.mozilla.org/de/firefox/',
   'safari'      :       'https://www.apple.com/de/safari/',
   'edge'        :       'https://www.microsoft.com/de-de/windows/microsoft-edge',
+  'opera'       :       'http://www.opera.com/de',
   'ie'          :       'https://support.microsoft.com/de-de/help/17621/internet-explorer-downloads',
   'ios'         :       '',
   'android'     :       '',
-  'ie_mobile'   :       ''
+  'ie_mobile'   :       '',
 }
 
 var STATUS_MESSAGES = {
@@ -34,27 +39,65 @@ var STATUS_MESSAGES = {
 }
 
 var status;
-var b, name, version;
+var name, version;
 
 /*
  * Initialize variables
  */
 if (typeof browser() != "undefined") {
-  b = browser();
-  name = b['name'];
-  version = b['versionNumber'];
-  mobile = b['mobile'];
-
-  // IEMobile check
-  if (getIEMobile() != false) {
-    name = 'ie_mobile';
-    version = getIEMobile();
-  }
-
+  b = getBrowserInfo(browser());
+  name = b[0];
+  version = b[1];
+  mobile = b[2];
   status = getSupportStatus(name, version, mobile);
 } else {
   // no support for browser-detection
   status = 'unknown';
+}
+
+/*
+ * Checks for individual browsers and sets browser's name and version
+ */
+function getBrowserInfo(b) {
+
+  var bName, bVersion;
+  // IEMobile check
+  if (getIndividualBrowserVersion('IEMobile') != false) {
+    bName = 'ie_mobile';
+    bVersion = getIndividualBrowserVersion('IEMobile');
+  }
+  // iOS firefox check
+  else if (getIndividualBrowserVersion('FxiOS') != false) {
+    bName = 'fxios';
+    bVersion = getIndividualBrowserVersion('FxiOS');
+  }
+  // default
+  else {
+    bName = b['name'];
+    bVersion = b['versionNumber'];
+  }
+  return [bName, bVersion, b['mobile']];
+}
+
+/*
+ * Extra check for individual browsers
+ */
+function getIndividualBrowserVersion(browserName) {
+  var indexStart = navigator.userAgent.indexOf(browserName);
+
+  if (indexStart != -1) {
+    var version  = navigator.userAgent.substring(indexStart+browserName.length+1);
+    var indexEnd1 = version.indexOf(";");
+    var indexEnd2 = version.indexOf(" ");
+
+    if (indexEnd1 != -1)
+      version = version.substring(0,indexEnd1);
+    if (indexEnd2 != -1)
+      version = version.substring(0,indexEnd2);
+
+    return parseFloat(version);
+  }
+  return false;
 }
 
 /*
@@ -68,7 +111,8 @@ function getSupportStatus(name, version, mobile) {
       return 'supported';
     } else {
       // too old
-      if (mobile) {
+      if (mobile && (name === 'ios' || name === 'android')) {
+        // browser is dependant on OS-Version
         return 'os_outdated';
       }
       return 'outdated';
@@ -80,28 +124,10 @@ function getSupportStatus(name, version, mobile) {
 }
 
 /*
- * Extra check for IEMobile-Browser
- */
-function getIEMobile() {
-  var n = 'IEMobile';
-  if ((indexStart = navigator.userAgent.indexOf(n)) != -1) {
-    var version  = navigator.userAgent.substring(indexStart+n.length+1);
-
-    if ((indexEnd = version.indexOf(";")) != -1)
-      version = version.substring(0,indexEnd);
-    if ((indexEnd = version.indexOf(" ")) != -1)
-      version = version.substring(0,indexEnd);
-
-    var versionNumber = parseFloat(version);
-    return versionNumber;
-  }
-  return false;
-}
-
-/*
  * onload
  */
 window.onload = function () {
+  alert(name+version);
   var msg;
   var dlink;
   var linkTxt;
