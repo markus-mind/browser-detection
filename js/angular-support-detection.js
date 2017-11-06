@@ -1,9 +1,7 @@
- /* NOT WORKING:
-  * safari on windows hat andere Versionen
-  * chrome / firefox auf iOS
-  * opera? -> Version 15 based on AngularJS
-  * opera on mobile?
-  */
+/*
+ * Browser-Detection for Angular-support
+ *
+ */
 
 var ANGULAR_SUPPORTED_BROWSER_VERSIONS = {
   'chrome'      :       '',
